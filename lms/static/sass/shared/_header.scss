@@ -138,7 +138,7 @@ header.global {
     }
 
     a.user-link {
-      @include padding(4px, 12px, 8px, 8px);
+      @include padding(3px, 12px, 8px, 8px);
       position: relative;
       text-transform: none;
       font-size: 14px;
@@ -154,7 +154,14 @@ header.global {
         opacity: 0.5;
         overflow: hidden;
         top: 4px;
+        margin-top: 1px;
+        margin-right: 2px;
         @include transition(all 0.15s linear 0s);
+      }
+      div {
+        margin-top: 3px;
+        float: right;
+        margin-left: 4px;
       }
 
       &:hover, &:focus {
