@@ -138,7 +138,7 @@ header.global {
     }
 
     a.user-link {
-      @include padding(6px, 12px, 8px, 35px);
+      @include padding(4px, 12px, 8px, 8px);
       position: relative;
       text-transform: none;
       font-size: 14px;
@@ -146,23 +146,15 @@ header.global {
       letter-spacing: 0;
 
       .avatar {
-        @include background-image(url('../images/small-header-home-icon.png'));
-        background-repeat: no-repeat;
 
         // CASE: right to left layout
-        @include rtl {
-          background-position: top right;
-        }
 
-        height: 26px;
         display: inline-block;
         @include left(8px);
         opacity: 0.5;
         overflow: hidden;
-        position: absolute;
         top: 4px;
         @include transition(all 0.15s linear 0s);
-        width: 26px;
       }
 
       &:hover, &:focus {
