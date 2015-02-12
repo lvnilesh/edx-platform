@@ -36,8 +36,8 @@ define([
         },
 
         keyDownToggleHandler: function (event) {
-            // Character 'n' has keyCode 78
-            if (event.keyCode === 78 && event.ctrlKey && event.altKey) {
+            // Character '[' has keyCode 219
+            if (event.keyCode === 219 && event.ctrlKey && event.shiftKey) {
                 this.toggleHandler(event);
             }
         },

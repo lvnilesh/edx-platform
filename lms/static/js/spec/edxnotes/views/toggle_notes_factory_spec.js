@@ -95,9 +95,9 @@ define([
             expect(errorContainer).not.toHaveClass('annotator-notice-show');
         });
 
-        it('toggles notes when CTRL + OPTION + n keydown on document', function () {
-            // Character 'n' has keyCode 78
-            $(document).trigger($.Event('keydown', {keyCode: 78, ctrlKey: true, altKey: true}));
+        it('toggles notes when CTRL + SHIFT + [ keydown on document', function () {
+            // Character '[' has keyCode 219
+            $(document).trigger($.Event('keydown', {keyCode: 219, ctrlKey: true, shiftKey: true}));
             expect(this.toggleNotes.toggleHandler).toHaveBeenCalled();
         });
     });
