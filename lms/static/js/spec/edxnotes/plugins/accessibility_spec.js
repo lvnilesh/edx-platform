@@ -158,10 +158,10 @@ define([
             it('should hide on ESCAPE keydown', function () {
                 var tabControls = [listing, note, edit, del, close];
 
-                _.each(tabControls, (function (control) {
+                _.each(tabControls, function (control) {
                     control.focus();
                     control.trigger(keyDownEvent(this.KEY.ESCAPE));
-                }).bind(this));
+                }, this);
                 expect(this.annotator.viewer.hide.callCount).toBe(5);
             });
         });
@@ -250,10 +250,10 @@ define([
             it('should hide on ESCAPE keydown', function () {
                 var tabControls = [textArea, save, cancel];
 
-                _.each(tabControls, (function (control) {
+                _.each(tabControls, function (control) {
                     control.focus();
                     control.trigger(keyDownEvent(this.KEY.ESCAPE));
-                }).bind(this));
+                }, this);
                 expect(this.annotator.editor.hide.callCount).toBe(3);
             });
         });
