@@ -48,6 +48,12 @@ define([
                 expect(this.annotator.unsubscribe).toHaveBeenCalledWith(
                     'annotationViewerTextField', this.plugin.addAriaAttributes
                 );
+                expect(this.annotator.unsubscribe).toHaveBeenCalledWith(
+                    'annotationsLoaded', this.plugin.addDescriptions
+                );
+                expect(this.annotator.unsubscribe).toHaveBeenCalledWith(
+                    'annotationCreated', this.plugin.addDescriptions
+                );
                 expect($.fn.off).toHaveBeenCalledWith('.accessibility');
             });
         });
@@ -59,19 +65,35 @@ define([
                 highlight = $('<span class="annotator-hl" tabindex="0"/>').appendTo(this.annotator.element);
                 annotation = {
                     id: '01',
-                    text: "Test text",
+                    text: 'Test text',
                     highlights: [highlight.get(0)]
                 };
             });
 
             it('should be added to highlighted text and associated note', function () {
                 this.annotator.viewer.load([annotation]);
-                note = $('#aria-note-01');
-                expect(highlight).toHaveAttr('aria-describedby', 'aria-note-01');
+                note = $('.annotator-note');
                 expect(note).toExist();
                 expect(note).toHaveAttr('tabindex', -1);
                 expect(note).toHaveAttr('role', 'note');
                 expect(note).toHaveAttr('class', 'annotator-note');
+            });
+
+            it('should create aria-descriptions when annotations are loaded', function () {
+                this.annotator.publish('annotationsLoaded', [[annotation]]);
+                expect(highlight).toHaveAttr('aria-describedby', 'aria-note-description-01');
+                expect($('#aria-note-description-01')).toContainText('Test text');
+            });
+
+            it('should create aria-description when new annotation is created', function () {
+                this.annotator.publish('annotationCreated', [annotation]);
+                expect(highlight).toHaveAttr('aria-describedby', 'aria-note-description-01');
+                expect($('#aria-note-description-01')).toContainText('Test text');
+            });
+
+            it('should remove aria-description when the annotation is removed', function () {
+                this.annotator.publish('annotationDeleted', [annotation]);
+                expect($('#aria-note-description-01')).not.toExist();
             });
         });
 

@@ -7,7 +7,7 @@ define(['jquery', 'underscore', 'annotator_1.2.9'], function ($, _, Annotator) {
     Annotator.Plugin.Accessibility = function () {
         _.bindAll(this,
             'addAriaAttributes', 'onHighlightKeyDown', 'onViewerKeyDown',
-            'onEditorKeyDown'
+            'onEditorKeyDown', 'addDescriptions', 'removeDescription'
         );
         // Call the Annotator.Plugin constructor this sets up the element and
         // options properties.
@@ -17,6 +17,9 @@ define(['jquery', 'underscore', 'annotator_1.2.9'], function ($, _, Annotator) {
     $.extend(Annotator.Plugin.Accessibility.prototype, new Annotator.Plugin(), {
         pluginInit: function () {
             this.annotator.subscribe('annotationViewerTextField', this.addAriaAttributes);
+            this.annotator.subscribe('annotationsLoaded', this.addDescriptions);
+            this.annotator.subscribe('annotationCreated', this.addDescriptions);
+            this.annotator.subscribe('annotationDeleted', this.removeDescription);
             this.annotator.element.on('keydown.accessibility.hl', '.annotator-hl', this.onHighlightKeyDown);
             this.annotator.element.on('keydown.accessibility.viewer', '.annotator-viewer', this.onViewerKeyDown);
             this.annotator.element.on('keydown.accessibility.editor', '.annotator-editor', this.onEditorKeyDown);
@@ -25,6 +28,9 @@ define(['jquery', 'underscore', 'annotator_1.2.9'], function ($, _, Annotator) {
 
         destroy: function () {
             this.annotator.unsubscribe('annotationViewerTextField', this.addAriaAttributes);
+            this.annotator.unsubscribe('annotationsLoaded', this.addDescriptions);
+            this.annotator.unsubscribe('annotationCreated', this.addDescriptions);
+            this.annotator.unsubscribe('annotationDeleted', this.removeDescription);
             this.annotator.element.off('.accessibility');
         },
 
@@ -34,17 +40,35 @@ define(['jquery', 'underscore', 'annotator_1.2.9'], function ($, _, Annotator) {
                 .attr('tabindex', 0);
         },
 
+        addDescriptions: function (annotations) {
+            if (!_.isArray(annotations)) {
+                annotations = [annotations];
+            }
+
+            _.each(annotations, function (annotation) {
+                var id = annotation.id || _.uniqueId();
+
+                this.annotator.wrapper.after($('<div />', {
+                    'class': 'aria-note-description sr',
+                    'id': 'aria-note-description-' + id,
+                    'text': Annotator.Util.escape(annotation.text)
+                }));
+
+                $(annotation.highlights).attr({
+                    'aria-describedby': 'aria-note-description-' + id
+                });
+            }, this);
+        },
+
+        removeDescription: function (annotation) {
+            var id = $(annotation.highlights).attr('aria-describedby');
+            $('#' + id).remove();
+        },
+
         addAriaAttributes: function (field, annotation) {
-            var ariaNoteId = 'aria-note-' + annotation.id;
-            // Add ARIA attributes to highlighted text ie <span class="annotator-hl">Highlighted text</span>
-            // aria-describedby refers to the actual note that was taken.
-            _.each(annotation.highlights, function(highlight) {
-                $(highlight).attr('aria-describedby', ariaNoteId);
-            });
             // Add ARIA attributes to associated note ie <div>My note</div>
             $(field).attr({
                 'tabindex': -1,
-                'id': ariaNoteId,
                 'role': 'note',
                 'class': 'annotator-note'
             });
