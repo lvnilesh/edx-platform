@@ -54,6 +54,9 @@ define([
                 expect(this.annotator.unsubscribe).toHaveBeenCalledWith(
                     'annotationCreated', this.plugin.addDescriptions
                 );
+                expect(this.annotator.unsubscribe).toHaveBeenCalledWith(
+                    'annotationDeleted', this.plugin.removeDescription
+                );
                 expect($.fn.off).toHaveBeenCalledWith('.accessibility');
             });
         });
