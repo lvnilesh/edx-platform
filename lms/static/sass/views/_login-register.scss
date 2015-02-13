@@ -276,6 +276,7 @@ $sm-btn-linkedin: #0077b5;
         .field-link {
             display: block;
             margin-bottom: ($baseline/2);
+            margin-top: ($baseline/4);
             color: $m-blue-d5;
             font-weight: $font-regular;
             text-decoration: none !important; // needed but nasty
