@@ -38,7 +38,7 @@ from student.models import CourseEnrollment
 
 
 # define different loggers for use within tasks and on client side
-TASK_LOG = get_task_logger(__name__)
+TASK_LOG = get_task_logger(__name__).parent
 
 # define value to use when no task_id is provided:
 UNKNOWN_TASK_ID = 'unknown-task_id'

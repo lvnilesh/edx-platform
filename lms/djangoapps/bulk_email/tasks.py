@@ -48,7 +48,7 @@ from instructor_task.subtasks import (
 )
 from util.query import use_read_replica_if_available
 
-log = get_task_logger(__name__)
+log = get_task_logger(__name__).parent
 
 
 # Errors that an individual email is failing to be sent, and should just

@@ -17,7 +17,7 @@ from django.core.cache import cache
 
 from instructor_task.models import InstructorTask, PROGRESS, QUEUING
 
-TASK_LOG = get_task_logger(__name__)
+TASK_LOG = get_task_logger(__name__).parent
 
 # Lock expiration should be long enough to allow a subtask to complete.
 SUBTASK_LOCK_EXPIRE = 60 * 10  # Lock expires in 10 minutes
