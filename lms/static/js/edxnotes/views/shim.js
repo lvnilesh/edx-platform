@@ -260,11 +260,15 @@ define([
         },
 
         onNoteClick: function (event) {
+            var target = $(event.target);
             event.stopPropagation();
             Annotator.Util.preventEventDefault(event);
-            if (!$(event.target).is('.annotator-delete')) {
+
+            if (!(target.is('.annotator-delete') || target.is('.annotator-close'))) {
                 Annotator.frozenSrc = this;
                 this.freezeAll();
+            } else if (target.is('.annotator-close')) {
+                this.viewer.hide();
             }
         },
 
