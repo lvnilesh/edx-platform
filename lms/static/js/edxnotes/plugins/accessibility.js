@@ -7,7 +7,8 @@ define(['jquery', 'underscore', 'annotator_1.2.9'], function ($, _, Annotator) {
     Annotator.Plugin.Accessibility = function () {
         _.bindAll(this,
             'addAriaAttributes', 'onHighlightKeyDown', 'onViewerKeyDown',
-            'onEditorKeyDown', 'addDescriptions', 'removeDescription'
+            'onEditorKeyDown', 'addDescriptions', 'removeDescription',
+            'saveCurrentHighlight'
         );
         // Call the Annotator.Plugin constructor this sets up the element and
         // options properties.
@@ -32,6 +33,7 @@ define(['jquery', 'underscore', 'annotator_1.2.9'], function ($, _, Annotator) {
             this.annotator.unsubscribe('annotationCreated', this.addDescriptions);
             this.annotator.unsubscribe('annotationDeleted', this.removeDescription);
             this.annotator.element.off('.accessibility');
+            this.savedHighlights = null;
         },
 
         addTabIndex: function () {
@@ -74,12 +76,18 @@ define(['jquery', 'underscore', 'annotator_1.2.9'], function ($, _, Annotator) {
             });
         },
 
+        saveCurrentHighlight: function (annotation) {
+            if (annotation && annotation.highlights) {
+                this.savedHighlights = annotation.highlights[0];
+            }
+        },
+
         focusOnHighlightedText: function (event) {
-            var id = this.annotator.element.find('.annotator-viewer')
-                                           .find('.annotator-note')
-                                           .attr('id');
-            $('.annotator-hl[aria-describedby=' + id + ']').focus();
-            event.preventDefault();
+            if (this.savedHighlights) {
+                this.savedHighlights.focus();
+                this.savedHighlights = null;
+                event.preventDefault();
+            }
         },
 
         getViewerTabControls: function () {
@@ -149,6 +157,7 @@ define(['jquery', 'underscore', 'annotator_1.2.9'], function ($, _, Annotator) {
                     if (!this.annotator.viewer.isShown()) {
                         position = target.position();
                         annotation = $.makeArray(target.data('annotation'));
+                        this.saveCurrentHighlight(target.data('annotation'));
                         this.annotator.showViewer(annotation, {top: position.top, left: position.left});
                         this.annotator.element.find('.annotator-listing').focus();
                     }

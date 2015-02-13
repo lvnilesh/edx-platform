@@ -107,9 +107,10 @@ define([
                 highlight = $('<span class="annotator-hl" tabindex="0"/>').appendTo(this.annotator.element);
                 annotation = {
                     id: '01',
-                    text: "Test text",
+                    text: 'Test text',
                     highlights: [highlight.get(0)]
                 };
+                highlight.data('annotation', annotation);
                 spyOn(this.annotator, 'showViewer').andCallThrough();
                 spyOn(this.annotator.viewer, 'hide').andCallThrough();
             });
@@ -123,6 +124,16 @@ define([
                 highlight.trigger(keyDownEvent(this.KEY.ENTER));
                 expect(this.annotator.showViewer).toHaveBeenCalled();
             });
+
+            it('should focus highlighted text after closing', function () {
+                var note;
+                highlight.trigger(keyDownEvent(this.KEY.ENTER));
+                expect(this.plugin.savedHighlights).toBeDefined();
+                note = this.annotator.element.find('.annotator-edit');
+                note.trigger(keyDownEvent(this.KEY.ESCAPE));
+                expect(highlight).toBeFocused();
+                expect(this.plugin.savedHighlights).toBeNull();
+            });
         });
 
         describe('keydown events on viewer', function () {
@@ -135,6 +146,7 @@ define([
                     text: "Test text",
                     highlights: [highlight.get(0)]
                 };
+                highlight.data('annotation', annotation);
                 this.annotator.viewer.load([annotation]);
                 listing = this.annotator.element.find('.annotator-listing').first(),
                 note = this.annotator.element.find('.annotator-note').first();
@@ -201,6 +213,7 @@ define([
                     text: "Test text",
                     highlights: [highlight.get(0)]
                 };
+                highlight.data('annotation', annotation);
                 this.annotator.editor.show(annotation, {'left': 0, 'top': 0});
                 form = this.annotator.element.find('form.annotator-widget');
                 textArea = this.annotator.element.find('.annotator-item').first().children('textarea');
