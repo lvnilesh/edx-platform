@@ -319,6 +319,24 @@ class FormDescription(object):
         })
 
 
+def set_course_id_from_analytics(post):
+    """
+    Include the course ID if it's specified in the analytics info
+    so it can be included in analytics events.
+    """
+    if "analytics" in post:
+        try:
+            analytics = json.loads(post["analytics"])
+            if "enroll_course_id" in analytics:
+                post["course_id"] = analytics.get("enroll_course_id")
+        except (ValueError, TypeError):
+            LOGGER.error(
+                u"Could not parse analytics object sent to user API: {analytics}".format(
+                    analytics=analytics
+                )
+            )
+
+
 def shim_student_view(view_func, check_logged_in=False):
     """Create a "shim" view for a view function from the student Django app.
 
@@ -360,29 +378,7 @@ def shim_student_view(view_func, check_logged_in=False):
         if "course_id" in request.POST:
             del request.POST["course_id"]
 
-        # Include the course ID if it's specified in the analytics info
-        # so it can be included in analytics events.
-        if "analytics" in request.POST:
-            try:
-                analytics = json.loads(request.POST["analytics"])
-                if "enroll_course_id" in analytics:
-                    request.POST["course_id"] = analytics.get("enroll_course_id")
-            except (ValueError, TypeError):
-                LOGGER.error(
-                    u"Could not parse analytics object sent to user API: {analytics}".format(
-                        analytics=analytics
-                    )
-                )
-
-        # Backwards compatibility: the student view expects both
-        # terms of service and honor code values.  Since we're combining
-        # these into a single checkbox, the only value we may get
-        # from the new view is "honor_code".
-        # Longer term, we will need to make this more flexible to support
-        # open source installations that may have separate checkboxes
-        # for TOS, privacy policy, etc.
-        if request.POST.get("honor_code") is not None and request.POST.get("terms_of_service") is None:
-            request.POST["terms_of_service"] = request.POST.get("honor_code")
+        set_course_id_from_analytics(request.POST)
 
         # Call the original view to generate a response.
         # We can safely modify the status code or content
