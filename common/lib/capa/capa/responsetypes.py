@@ -1115,7 +1115,8 @@ class OptionResponse(LoncapaResponse):
         variable_name = None
         if aid in student_answers:
             for key, val in self.context.iteritems():
-                # convert val into unicode because student answer always be a unicode string.
+                # convert val into unicode because student answer always be a unicode string
+                # even it is a list, dict etc.
                 if unicode(val) == student_answers[aid]:
                     variable_name = '$' + key
         return variable_name
