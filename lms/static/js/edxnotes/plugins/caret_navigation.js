@@ -23,8 +23,8 @@ define(['jquery', 'underscore', 'annotator'], function ($, _, Annotator) {
         },
 
         isShortcut: function (event) {
-            var shortcuts = [$.ui.keyCode.SPACE, $.ui.keyCode.ENTER];
-            return event.ctrlKey && _.contains(shortcuts, event.which);
+            // Character ']' has keyCode 221
+            return event.keyCode === 221 && event.ctrlKey && event.shiftKey;
         },
 
         hasSelection: function (ranges) {

@@ -31,24 +31,22 @@ define([
             it('should return `true` if it is a shortcut', function () {
                 expect(this.plugin.isShortcut($.Event('keyup', {
                     ctrlKey: true,
-                    which: $.ui.keyCode.SPACE
-                }))).toBeTruthy();
-
-                expect(this.plugin.isShortcut($.Event('keyup', {
-                    ctrlKey: true,
-                    which: $.ui.keyCode.ENTER
+                    shiftKey: true,
+                    keyCode: 221
                 }))).toBeTruthy();
             });
 
             it('should return `false` if it is not a shortcut', function () {
                 expect(this.plugin.isShortcut($.Event('keyup', {
                     ctrlKey: false,
-                    which: $.ui.keyCode.ENTER
+                    shiftKey: true,
+                    keyCode: 221
                 }))).toBeFalsy();
 
                 expect(this.plugin.isShortcut($.Event('keyup', {
                     ctrlKey: true,
-                    which: $.ui.keyCode.TAB
+                    shiftKey: true,
+                    keyCode: $.ui.keyCode.TAB
                 }))).toBeFalsy();
             });
         });
@@ -68,7 +66,8 @@ define([
             var triggerEvent = function (element, props) {
                 var eventProps = $.extend({
                     ctrlKey: true,
-                    which: $.ui.keyCode.SPACE
+                    shiftKey: true,
+                    keyCode: 221
                 }, props);
                 element.trigger($.Event('keyup', eventProps));
             };
